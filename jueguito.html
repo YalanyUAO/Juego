@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Juego del Amor</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #ffe6e6;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #ff6699;
+            font-size: 3em;
+        }
+
+        p {
+            font-size: 1.2em;
+            color: #ff4d88;
+        }
+
+        #gameArea {
+            position: relative;
+            width: 600px;
+            height: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            border: 5px solid #ff99cc;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .heart {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-image: url('https://cdn.pixabay.com/photo/2017/01/31/13/13/heart-2021539_960_720.png');
+            background-size: cover;
+            cursor: pointer;
+        }
+
+        .playButton {
+            padding: 10px 20px;
+            font-size: 1.5em;
+            background-color: #ff3385;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .playButton:hover {
+            background-color: #ff0055;
+        }
+
+        .message {
+            font-size: 1.5em;
+            color: #ff1a75;
+            margin-top: 20px;
+        }
+
+        .timer {
+            font-size: 2em;
+            color: #ff3385;
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>El Juego del Amor 💖</h1>
+    <p>¡Colecciona todos los corazones antes de que se acabe el tiempo!</p>
+
+    <div class="timer" id="timer">Tiempo: 30s</div>
+    <div id="gameArea"></div>
+    
+    <button class="playButton" onclick="startGame()">Comenzar juego</button>
+
+    <div class="message" id="message"></div>
+
+    <script>
+        let totalHearts = 10;
+        let heartsCollected = 0;
+        let timeLeft = 30;
+        let timerInterval;
+        let message = document.getElementById('message');
+        let timerDisplay = document.getElementById('timer');
+        let heartElements = [];
+
+        function startGame() {
+            message.innerHTML = '';
+            heartsCollected = 0;
+            timeLeft = 30;
+            updateTimer();
+            
+            const gameArea = document.getElementById('gameArea');
+            gameArea.innerHTML = ''; // Limpiar el área del juego
+            heartElements = [];
+
+            // Colocar corazones en posiciones aleatorias
+            for (let i = 0; i < totalHearts; i++) {
+                let heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.style.top = Math.random() * 550 + 'px';
+                heart.style.left = Math.random() * 550 + 'px';
+                gameArea.appendChild(heart);
+                heartElements.push(heart);
+
+                // Agregar evento para recoger el corazón
+                heart.addEventListener('click', () => {
+                    heart.remove();
+                    heartsCollected++;
+                    checkWin();
+                });
+            }
+
+            // Iniciar el temporizador
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimer();
+
+                if (timeLeft === 0) {
+                    endGame(false);
+                }
+            }, 1000);
+        }
+
+        function updateTimer() {
+            timerDisplay.innerHTML = `Tiempo: ${timeLeft}s`;
+        }
+
+        function checkWin() {
+            if (heartsCollected === totalHearts) {
+                endGame(true);
+            }
+        }
+
+        function endGame(win) {
+            clearInterval(timerInterval);
+            if (win) {
+                message.innerHTML = '¡Felicidades, encontraste todos los corazones! ❤️ ahora para saber cuanto te amo, solo multiplica todos los corazones que econtraste por infinito 😘';
+            } else {
+                message.innerHTML = 'Oh no, el tiempo se acabó... Pero igual te amo muuuuuuuuuucho ❤️';
+            }
+
+            // Limpiar los corazones restantes
+            heartElements.forEach(heart => heart.remove());
+        }
+    </script>
+</body>
+</html>
